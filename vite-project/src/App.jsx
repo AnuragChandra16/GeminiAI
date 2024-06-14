@@ -1,5 +1,5 @@
+
 import { useState } from 'react'
-require("dotenv").config();
 import React from 'react'
 import axios from 'axios'
 import { useMutation } from '@tanstack/react-query'
@@ -8,7 +8,7 @@ import './App.css'
 
 //!Function that must return a promise (useMutation)
 const makeRequestAPI = async (prompt) => {
-  const res = await axios.post(`${process.env.REACT_APP_API_URL}/generate`, { prompt });
+  const res = await axios.post("http://localhost:8080/generate", { prompt });
   return res.data;
 };
 
