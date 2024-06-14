@@ -34,4 +34,8 @@ app.post("/generate", async (req, res) => {
 });
 
 //!Start the server
-app.listen(8080, console.log("Server is running"));
+const PORT=process.env.PORT || 8080;
+
+app.listen(PORT,console.log(`Server is running on ${PORT}`))
+// const port=process.env.port
+// app.listen(8080, console.log("Server is running"));
