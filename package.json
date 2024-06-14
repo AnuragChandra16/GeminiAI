@@ -1,0 +1,13 @@
+{
+    "name": "my-project",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start": "concurrently \"npm run BACKEND\" \"npm run vite-project\"",
+        "BACKEND": "cd BACKEND && npm start",
+        "vite-project": "cd vite-project && npm run dev"
+    },
+    "devDependencies": {
+        "concurrently": "^7.6.0"
+    }
+}
