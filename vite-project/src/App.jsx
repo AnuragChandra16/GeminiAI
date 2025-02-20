@@ -68,7 +68,7 @@ import './App.css';
 
 // API request function
 const makeRequestAPI = async (prompt) => {
-  const res = await axios.post("https://geminiai-real.onrender.com//generate", { prompt });
+  const res = await axios.post("https://geminiai-real.onrender.com/generate", { prompt });
   // Access the result property from the response
   return res.data.result;
 };
