@@ -12,7 +12,7 @@ const app = express();
 // };
 // app.use(cors(corsOptions));
 const corsOptions = {
-  origin: ['https://gemini-ai-frontend-five.vercel.app', 'http://localhost:5173'],
+  origin: ['https://gemini-ai-frontend-five.vercel.app','https://geminiai-6.onrender.com/', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
