@@ -11,18 +11,24 @@ const app = express();
 //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 // };
 // app.use(cors(corsOptions));
-const corsOptions = {
-  origin: ['http://localhost:8000','https://gemini-ai-blush.vercel.app/'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 204
-};
 
-app.use(cors(corsOptions));
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+// const corsOptions = {
+//   origin: ['http://localhost:8000','https://gemini-ai-blush.vercel.app/'],
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true,
+//   optionsSuccessStatus: 204
+// };
 
-// Handle preflight requests
-app.options('*', cors(corsOptions));
+// app.use(cors(corsOptions));
+
+// // Handle preflight requests
+// app.options('*', cors(corsOptions));
 
 app.use(express.json());
 // Access your API key as an environment variable (see "Set up your API key" above)
