@@ -68,14 +68,21 @@ import './App.css';
 
 // API request function
 const makeRequestAPI = async (prompt) => {
-  const res = await axios.post("https://geminiai-real.onrender.com/generate", { prompt });
+  try {
+    const res = await axios.post("https://geminiai-real.onrender.com/generate", { prompt });
 
-  // Ensure result property exists
-  if (!res.data || !res.data.result) {
-    throw new Error("Invalid response from API");
+    console.log("API Response:", res.data); // Log full response
+
+    // Ensure we handle different response formats
+    if (!res.data || typeof res.data !== "object") {
+      throw new Error("Unexpected API response format");
+    }
+
+    return res.data.result || res.data; // Fallback to res.data if 'result' is missing
+  } catch (error) {
+    console.error("API Request Error:", error.response?.data || error.message);
+    throw error; // Ensure error propagates to React Query
   }
-
-  return res.data.result;
 };
 
 function App() {
@@ -87,17 +94,17 @@ function App() {
     mutationKey: ["gemini-ai-request"],
   });
 
-  // Log mutation.data when it changes
+  // Log mutation data when it updates
   useEffect(() => {
     if (mutation.isSuccess) {
       console.log("Mutation Data:", mutation.data);
     }
-  }, [mutation.data]); // Runs when mutation.data updates
+  }, [mutation.data]);
 
   // Submit handler
   const submitHandler = (e) => {
     e.preventDefault();
-    if (!prompt.trim() || mutation.isPending) return; // Prevent empty input & multiple submissions
+    if (!prompt.trim() || mutation.isPending) return;
 
     mutation.mutate(prompt, {
       onSuccess: (data) => {
@@ -128,7 +135,7 @@ function App() {
         <button 
           className="App-button" 
           type="submit"
-          disabled={mutation.isPending} // Disable button when request is pending
+          disabled={mutation.isPending}
         >
           {mutation.isPending ? "Generating..." : "Generate Content"}
         </button>
