@@ -60,7 +60,7 @@
 // export default App;
 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
 import axios from 'axios';
 import { useMutation } from '@tanstack/react-query';
@@ -69,7 +69,12 @@ import './App.css';
 // API request function
 const makeRequestAPI = async (prompt) => {
   const res = await axios.post("https://geminiai-real.onrender.com/generate", { prompt });
-  // Access the result property from the response
+
+  // Ensure result property exists
+  if (!res.data || !res.data.result) {
+    throw new Error("Invalid response from API");
+  }
+
   return res.data.result;
 };
 
@@ -82,11 +87,26 @@ function App() {
     mutationKey: ["gemini-ai-request"],
   });
 
+  // Log mutation.data when it changes
+  useEffect(() => {
+    if (mutation.isSuccess) {
+      console.log("Mutation Data:", mutation.data);
+    }
+  }, [mutation.data]); // Runs when mutation.data updates
+
   // Submit handler
   const submitHandler = (e) => {
     e.preventDefault();
-    if (!prompt.trim()) return; // Prevent empty submissions
-    mutation.mutate(prompt);
+    if (!prompt.trim() || mutation.isPending) return; // Prevent empty input & multiple submissions
+
+    mutation.mutate(prompt, {
+      onSuccess: (data) => {
+        console.log("Mutation Success Data:", data);
+      },
+      onError: (error) => {
+        console.error("Mutation Error:", error.response?.data || error.message);
+      }
+    });
   };
 
   return (
@@ -101,38 +121,37 @@ function App() {
           id="prompt"
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Write a content about..."
+          placeholder="Write content about..."
           className="App-input"
         />
         
         <button 
           className="App-button" 
           type="submit"
-          disabled={mutation.isPending}
+          disabled={mutation.isPending} // Disable button when request is pending
         >
-          Generate Content
+          {mutation.isPending ? "Generating..." : "Generate Content"}
         </button>
 
         <section className="App-response">
-          {mutation.isPending && (
-            <p className='gen'>Generating your content...</p>
-          )}
-          
+          {mutation.isPending && <p className='gen'>Generating your content...</p>}
+
           {mutation.isError && (
             <p className='red'>
-              Oops! {mutation.error.message}
+              Oops! {mutation.error.response?.data || mutation.error.message}
             </p>
           )}
-          
+
           {mutation.isSuccess && (
             <div>
-              <p className='thanks'>
-                Thanks for your patience, below is your content
-              </p>
+              <p className='thanks'>Thanks for your patience, below is your content:</p>
               <p className='ans'>{mutation.data}</p>
             </div>
           )}
         </section>
+
+        {/* Debugging: Show raw mutation data */}
+        <pre>Debug: {JSON.stringify(mutation.data, null, 2)}</pre>
       </form>
     </div>
   );
